@@ -1,0 +1,8 @@
+select id from ods_coredb.wifi_doudizhu_user_his where pt='2017-07-09' and original_channel='from_wifi_ADfeeds'  limit 30;
+
+select id from ods_coredb.wifi_doudizhu_user_his where pt='${hiveconf:pt}' and original_channel='%${hiveconf:chn}%'  limit 30  
+
+hive -hiveconf pt=`date -d '-1 day' +%Y-%m-%d` -hiveconf chn='from_wifi_ADfeeds' -f test.sql  
+
+hive -hiveconf pt='2017-06-05' -hiveconf chn='from_wifi_ADfeeds' -f test.sql>hejy_temp_1.txt
+
