@@ -1,0 +1,246 @@
+# 特征抽取：对特征进行向量化：根据词频；根据词频和文档频率；以及是否考虑停用词
+measurements = [{'city':'Dubai', 'temperature':'33.'}, {'city':'London', 'temperature':'12.'}, {'city':'San Fransisco', 'temperature':'18.'}]
+
+from sklearn.feature_extraction import DictVectorizer
+
+vec=DictVectorizer()
+#DictVectorizer对特征进行抽取和细化:将dict类型的list数据，转换成numpy array
+vec.fit_transform(measurements).toarray()
+vec.get_feature_names()
+
+
+#使用CountVectorizer(只根据词频)进行向量化
+from sklearn.datasets import fetch_20newsgroups
+news=fetch_20newsgroups(subset='all')
+from sklearn.model_selection import train_test_split
+X_train,X_test,y_train,y_test=train_test_split(news.data,news.target,test_size=0.25,random_state=33)
+from sklearn.feature_extraction.text import CountVectorizer
+count_vec=CountVectorizer()
+#只统计词频 默认不去除停用词
+X_count_train=count_vec.fit_transform(X_train)
+X_count_test=count_vec.transform(X_test)
+from sklearn.naive_bayes import MultinomialNB
+mnb_count=MultinomialNB()
+mnb_count.fit(X_count_train,y_train)
+mnb_count_y_predict=mnb_count.predict(X_count_test)
+print 'the accuracy :',mnb_count.score(X_count_test,y_test)
+from sklearn.metrics import classification_report
+print classification_report(y_test,mnb_count_y_predict,target_names=news.target_names)
+#使用TfidfVectorizer(根据词频和文档频率)进行向量化
+from sklearn.datasets import fetch_20newsgroups
+news=fetch_20newsgroups(subset='all')
+from sklearn.model_selection import train_test_split
+X_train,X_test,y_train,y_test=train_test_split(news.data,news.target,test_size=0.25,random_state=33)
+from sklearn.feature_extraction.text import TfidfVectorizer
+tfi_vec=TfidfVectorizer()
+#统计词频以及文档频率 默认不去除停用词
+X_tfi_train=tfi_vec.fit_transform(X_train)
+X_tfi_test=tfi_vec.transform(X_test)
+from sklearn.naive_bayes import MultinomialNB
+mnb_tfi=MultinomialNB()
+mnb_tfi.fit(X_tfi_train,y_train)
+mnb_tfi_y_predict=mnb_tfi.predict(X_tfi_test)
+print 'the accuracy :',mnb_tfi.score(X_tfi_test,y_test)
+from sklearn.metrics import classification_report
+print classification_report(y_test,mnb_tfi_y_predict,target_names=news.target_names)
+#使用停用词进行对比
+#设置停用词为‘english’则表示调用系统默认的英文停用词 
+count_filter_vec,tfi_filter_vec=CountVectorizer(analyzer='word',stop_words='english'),TfidfVectorizer(analyzer='word',stop_words='english')
+#使用有停用词的CountVectorizer
+X_count_filter_train=count_filter_vec.fit_transform(X_train)
+X_count_filter_test=count_filter_vec.transform(X_test)
+#使用有停用词的TfidfVectorizer
+X_tfi_filter_train=tfi_filter_vec.fit_transform(X_train)
+X_tfi_filter_test=tfi_filter_vec.transform(X_test)
+mnb_count_filter=MultinomialNB()
+mnb_count_filter.fit(X_count_filter_train,y_train)
+y_count_predict=mnb_count_filter.predict(X_count_filter_test)
+ 
+mnb_tfi_filter=MultinomialNB()
+mnb_tfi_filter.fit(X_tfi_filter_train,y_train)
+y_tfi_predict=mnb_tfi_filter.predict(X_tfi_filter_test)
+ 
+print 'the accuracy :',mnb_count_filter.score(X_count_filter_test,y_test)
+from sklearn.metrics import classification_report
+print classification_report(y_test,y_count_predict,target_names=news.target_names)
+ 
+print 'the accuracy :',mnb_tfi_filter.score(X_tfi_filter_test,y_test)
+from sklearn.metrics import classification_report
+print classification_report(y_test,y_tfi_predict,target_names=news.target_names)
+ 
+#实验发现 加了停用词之后 正确率会提升
+特征筛选：选择不同比例的特征进行测试，选择效果最好的特征。chi2是卡方检验。
+import pandas as pd
+titanic=pd.read_csv('http://biostat.mc.vanderbilt.edu/wiki/pub/Main/DataSets/titanic.txt')
+y=titanic['survived']
+X=titanic.drop(['row.names','name','survived'],axis=1)
+X['age'].fillna(X['age'].mean(),inplace=True)
+X.fillna('UNKNOWN',inplace=True)
+from sklearn.model_selection import train_test_split
+X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.25,random_state=33)
+from sklearn.feature_extraction import DictVectorizer
+vec=DictVectorizer()
+X_train=vec.fit_transform(X_train.to_dict(orient='record'))
+X_test=vec.transform(X_test.to_dict(orient='record'))
+print len(vec.feature_names_)
+ 
+#使用决策树进行预测
+from sklearn.tree import DecisionTreeClassifier
+dt=DecisionTreeClassifier(criterion='entropy')
+dt.fit(X_train,y_train)
+y_predict=dt.predict(X_test)
+dt.score(X_test,y_test)
+#使用特征筛选器；学会如何筛选出最适合的特征值
+#x y 第一维不一致的问题是因为把results写成了result
+import numpy as np
+from sklearn import feature_selection
+#s筛选前20%的特征
+#fs返回最佳的前20%个特征 chi2是卡方检验 用来计算单一特征与类别之间的相关性
+fs=feature_selection.SelectPercentile(feature_selection.chi2,percentile=20)
+X_fs_train=fs.fit_transform(X_train,y_train)
+dt.fit(X_fs_train,y_train)
+X_fs_test=fs.transform(X_test)
+dt.score(X_fs_test,y_test)
+ 
+from sklearn.model_selection import cross_val_score
+percentiles=np.arange(1,100,2)
+results=[]
+for i in percentiles:
+    fs=feature_selection.SelectPercentile(feature_selection.chi2,percentile=i)
+    X_train_fs=fs.fit_transform(X_train,y_train)
+    #cv选择每次测试的折数 按照5折 每次1折作为测试集 其余作为训练集 不断循环 每一折都做一次测试集
+    scores=cross_val_score(dt,X_train_fs,y_train,cv=5)
+    #更新results 不断加入平均分数
+    results=np.append(results,scores.mean())
+print results
+opt=np.where(results==results.max())[0]
+print'Opt:',np.array(percentiles)[opt]
+import pylab as pl
+percentiles=percentiles.reshape(-1,1)
+results=results.reshape(-1,1)
+pl.plot(percentiles,results)
+pl.xlabel('%%percentiles of features')
+pl.ylabel('accuracy')
+pl.show()
+ 
+from sklearn import feature_selection
+fs=feature_selection.SelectPercentile(feature_selection.chi2,percentile=7)
+X_train_fs=fs.fit_transform(X_train,y_train)
+dt.fit(X_train_fs,y_train)
+X_test_fs=fs.transform(X_test)
+dt.score(X_test_fs,y_test)
+
+
+模型正则化：欠拟合，过拟合。为了防止过拟合，使用L1正则（加入参数w的绝对值约束）,或者使用L2范数正则。
+#比萨直径与售价的关系
+X_train=[[6],[8],[10],[14],[18]]
+y_train=[[7],[9],[13],[17.5],[18]]
+from sklearn.linear_model import LinearRegression
+regressor=LinearRegression()
+regressor.fit(X_train,y_train)
+import numpy as np
+#linspace均匀采样在0,-26之间采样100个点
+xx=np.linspace(0,26,100)
+xx=xx.reshape(xx.shape[0],1)
+yy=regressor.predict(xx)
+import matplotlib.pyplot as plt
+plt.scatter(X_train,y_train)
+#设置legend图例：一次拟合 直线
+plt1,=plt.plot(xx,yy,label="Degree=1")
+plt.axis([0,25,0,25])
+plt.xlabel('Diameter of Pizza')
+plt.ylabel('Price of Pizza')
+#为完全控制，将句柄传递给legend
+plt.legend(handles=[plt1])
+plt.show()
+print 'regressor :',regressor.score(X_train,y_train)
+
+
+#使用二次多项式模型
+#y=a+bx+cx^2
+from sklearn.preprocessing import PolynomialFeatures
+poly2=PolynomialFeatures()
+X_train_poly2=poly2.fit_transform(X_train)
+#fit_transform之后[6]变成了[1,6,36]
+regressor_poly2=LinearRegression()
+regressor_poly2.fit(X_train_poly2,y_train)
+xx_poly2=poly2.transform(xx)
+yy_poly2=regressor_poly2.predict(xx_poly2)
+plt.scatter(X_train,y_train)
+plt1,=plt.plot(xx,yy,label='Degree=1')
+plt2,=plt.plot(xx,yy_poly2,label='Degree=2')
+#设置横纵坐标轴
+plt.axis([0,25,0,25])
+plt.xlabel('Diameter of Pizza')
+plt.ylabel('Price of Pizza')
+#为完全控制，将句柄传递给legend
+plt.legend(handles=[plt1,plt2])
+plt.show()
+print 'regressor_poly :',regressor_poly2.score(X_train_poly2,y_train)
+
+
+#使用四次多项式模型
+#y=a+bx+cx^2
+from sklearn.preprocessing import PolynomialFeatures
+poly4=PolynomialFeatures(degree=4)
+X_train_poly4=poly4.fit_transform(X_train)
+regressor_poly4=LinearRegression()
+regressor_poly4.fit(X_train_poly4,y_train)
+xx_poly4=poly4.transform(xx)
+yy_poly4=regressor_poly4.predict(xx_poly4)
+plt.scatter(X_train,y_train)
+plt1,=plt.plot(xx,yy,label='Degree=1')
+plt2,=plt.plot(xx,yy_poly2,label='Degree=2')
+plt4,=plt.plot(xx,yy_poly4,label='Degree=4')
+#设置横纵坐标轴
+plt.axis([0,25,0,25])
+plt.xlabel('Diameter of Pizza')
+plt.ylabel('Price of Pizza')
+#为完全控制，将句柄传递给legend
+plt.legend(handles=[plt1,plt2,plt4])
+plt.show()
+print 'regressor_poly :',regressor_poly4.score(X_train_poly4,y_train)
+
+
+#测试集进行测试
+X_test=[[6],[8],[11],[16]]
+y_test=[[8],[12],[15],[18]]
+regressor.score(X_test,y_test)
+X_test_poly2=poly2.transform(X_test)
+X_test_poly4=poly4.transform(X_test)
+regressor_poly2.score(X_test_poly2,y_test)
+regressor_poly4.score(X_test_poly4,y_test)
+#加入L1正则 :Lasso
+from sklearn.linear_model import Lasso
+lasso_poly4=Lasso()
+lasso_poly4.fit(X_train_poly4,y_train)
+print lasso_poly4.score(X_test_poly4,y_test)
+#coef输出函数的参数
+print lasso_poly4.coef_
+print regressor_poly4.coef_
+from sklearn.linear_model import Ridge
+ridge_poly4=Ridge()
+ridge_poly4.fit(X_train_poly4,y_train)
+print ridge_poly4.score(X_test_poly4,y_test)
+print ridge_poly4.coef_
+print np.sum(lasso_poly4.coef_**2)
+print np.sum(ridge_poly4.coef_**2)
+print np.sum(regressor_poly4.coef_**2)
+from sklearn.datasets import fetch_20newsgroups
+import numpy as np
+news=fetch_20newsgroups(subset='all')
+from sklearn.model_selection import train_test_split
+X_train,X_test,y_train,y_test=train_test_split(news.data[:3000],news.target[:3000],test_size=0.25,random_state=33)
+from sklearn.svm import SVC
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.pipeline import Pipeline
+#pipeline 一种简化代码的方法 先数据处理再预测
+clf=Pipeline([('vect',TfidfVectorizer(stop_words='english',analyzer='word')),('svc',SVC())])
+parameters={'svc_gamma':np.logspace(-2,1,4),'svc_C':np.logspace(-1,1,3)}
+from sklearn.model_selection import GridSearchCV
+ 
+gs=GridSearchCV(clf,parameters,verbose=2,refit=True,cv=3)
+%time _=gs.fit(X_train,y_train)
+gs.best_params_, gs.bset_score_
+print gs.score(X_test,y_test)
+超参数搜索方法：网格搜索：单线程以及并行搜索。
