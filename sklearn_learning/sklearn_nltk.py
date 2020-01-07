@@ -31,12 +31,14 @@ vocab_1 = sorted(set(tokens_1))
 vocab_2 = sorted(set(tokens_2))
 print(vocab_1)
 print(vocab_2)
+
 # 找到词汇原始的词根
 stemmer = nltk.stem.PorterStemmer()
 stem_1 = [stemmer.stem(t) for t in tokens_1]
 stem_2 = [stemmer.stem(t) for t in tokens_2]
 print(stem_1)
 print(stem_2)
+
 nltk.download('averaged_perceptron_tagger')
 # 对词性进行标注
 pos_tag_1 = nltk.tag.pos_tag(tokens_1)
