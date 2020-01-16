@@ -113,13 +113,13 @@ for review in unlabeled_train['review']:
 # Set values for various parameters
 num_features = 300    # Word vector dimensionality
 min_word_count = 20   # Minimum word count
-num_workers = 8       # Number of threads to run in parallel
+num_workers = 12       # Number of threads to run in parallel
 context = 10          # Context window size
 downsampling = 1e-3   # Downsample setting for frequent words
 
 model = word2vec.Word2Vec(corpora, workers=num_workers,
                           size=num_features, min_count=min_word_count,
-                          window=context, sample=downsampling)
+                          window=context, sample=downsampling, sg=1)
 
 model.init_sims(replace=True)
 
