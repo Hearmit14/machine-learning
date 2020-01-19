@@ -155,7 +155,8 @@ if __name__ == '__main__':
 #         self.left = None
 #         self.right = None
 
-
+# 前序遍历
+# 直接使用inorderTraversal递归会默认赋为初始值
 class Solution:
     def inorderTraversal(self, root: TreeNode) -> List[int]:
         queue = []
@@ -186,3 +187,22 @@ class Solution:
             if node.left:
                 stack.append(node.left)
         return res
+
+# 中序遍历
+# 递归
+
+
+class solution():
+    def inorderTraversal(self, root: TreeNode) -> List[int]:
+        if root is None:
+            return []
+        queue = []
+
+        def f(node):
+            if node.left:
+                f(node.left)
+            queque.append(node.val)
+            if node.right:
+                f(node.right)
+        f(root)
+        return queue
