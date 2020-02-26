@@ -703,7 +703,7 @@ do
 	if [[ $i == $t ]]; then
 	k="$k""')"
 	echo $k
-fi
+   fi
 done
 
 push_result_rid(){
