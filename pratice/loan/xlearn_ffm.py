@@ -1,3 +1,4 @@
+from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction import DictVectorizer
 import pandas as pd
 import xlearn as xl
@@ -50,20 +51,31 @@ train_sub['Credit_History'].fillna(0, inplace=True)
 
 train_sub.info()
 
-# dict_ls = {'Y': 1, 'N': 0}
-# train_sub['Loan_Status'].replace(dict_ls, inplace=True)
+dict_ls = {'Y': 1, 'N': 0}
+train_sub['Loan_Status'].replace(dict_ls, inplace=True)
 
-vec = DictVectorizer()
-X_train = vec.fit_transform(train_sub.to_dict(orient='record'))
-vec.feature_names_
-print(X_train[0])
-print(len(vec.feature_names_))
-X_train.shape
+X_train, X_test = train_test_split(train_sub, test_size=0.3, random_state=5)
+
+# vec = DictVectorizer()
+# X_train = vec.fit_transform(train_sub.to_dict(orient='record'))
+# vec.feature_names_
+# print(X_train[0])
+# print(len(vec.feature_names_))
+# X_train.shape
 # (614, 21)
 
+# df = Dataframe to be converted to ffm format
+# Type = ‘Train’ / ‘Test’/ ‘Valid’
 # Numerics = list of all numeric fields
 # Categories = list of all categorical fields
 # Features = list of all features except the Label and Id
+
+df = X_train
+numerics = ['ApplicantIncome', 'CoapplicantIncome', 'LoanAmount']
+categories = ['Gender', 'Married', 'Dependents',
+              'Education', 'Self_Employed', 'Loan_Status', 'Credit_History', 'Property_Area']
+features = ['Gender', 'Married', 'Dependents', 'Education', 'Self_Employed', 'ApplicantIncome',
+            'CoapplicantIncome', 'LoanAmount', 'Credit_History', 'Property_Area']
 
 
 def convert_to_ffm(df, type, numerics, categories, features):
