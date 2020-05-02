@@ -1,90 +1,108 @@
 # -*- codding:utf-8 -*-
 # 栈
+
+
 class Stack(object):
     def __init__(self, limit=10):
-        self.stack = [] #存放元素
-        self.limit = limit #栈容量极限
-    def push(self, data): #判断栈是否溢出
+        self.stack = []  # 存放元素
+        self.limit = limit  # 栈容量极限
+
+    def push(self, data):  # 判断栈是否溢出
         if len(self.stack) >= self.limit:
             print('StackOverflowError')
             return
         self.stack.append(data)
+
     def pop(self):
         if self.stack:
             return self.stack.pop()
         else:
-            raise IndexError('pop from an empty stack') #空栈不能被弹出
-    def peek(self): #查看堆栈的最上面的元素
+            raise IndexError('pop from an empty stack')  # 空栈不能被弹出
+
+    def peek(self):  # 查看堆栈的最上面的元素
         if self.stack:
             return self.stack[-1]
-    def is_empty(self): #判断栈是否为空
+
+    def is_empty(self):  # 判断栈是否为空
         return not bool(self.stack)
-    def size(self): #返回栈的大小
+
+    def size(self):  # 返回栈的大小
         return len(self.stack)
 
 # 单链表
-class Node:  
+
+
+class Node:
     def __init__(self, data):
-        self.data = data  
-        self.next = None  
+        self.data = data
+        self.next = None
+
+
 class Linked_List:
     def __init__(self):
         self.head = None
-    def initlist(self,data_list):    #链表初始化函数
-        self.head=Node(data_list[0])   #创建头结点
-        temp=self.head
-        for i in data_list[1:]: #逐个为 data 内的数据创建结点, 建立链表
-            node=Node(i)
-            temp.next=node
-            temp=temp.next
-    def is_empty(self):  #判断链表是否为空
-        if self.head.next==None:
+
+    def initlist(self, data_list):  # 链表初始化函数
+        self.head = Node(data_list[0])  # 创建头结点
+        temp = self.head
+        for i in data_list[1:]:  # 逐个为 data 内的数据创建结点, 建立链表
+            node = Node(i)
+            temp.next = node
+            temp = temp.next
+
+    def is_empty(self):  # 判断链表是否为空
+        if self.head.next == None:
             print("Linked_list is empty")
             return True
         else:
             return False
-    def get_length(self):  #获取链表的长度
-        temp=self.head #临时变量指向队列头部
-        length=0 #计算链表的长度变量
-        while temp!=None:
-            length=length+1
-            temp=temp.next
-        return length #返回链表的长度
-    def insert(self,key,value): #链表插入数据函数
-        if key<0 or key>self.get_length()-1:
+
+    def get_length(self):  # 获取链表的长度
+        temp = self.head  # 临时变量指向队列头部
+        length = 0  # 计算链表的长度变量
+        while temp != None:
+            length = length+1
+            temp = temp.next
+        return length  # 返回链表的长度
+
+    def insert(self, key, value):  # 链表插入数据函数
+        if key < 0 or key > self.get_length()-1:
             print("insert error")
-        temp=self.head
-        i=0
-        while i<=key: #遍历找到索引值为 key 的结点后, 在其后面插入结点
-            pre=temp
-            temp=temp.next
-            i=i+1
-        node=Node(value)
-        pre.next=node
-        node.next=temp
-    def print_list(self):   #遍历链表，并将元素依次打印出来
+        temp = self.head
+        i = 0
+        while i <= key:  # 遍历找到索引值为 key 的结点后, 在其后面插入结点
+            pre = temp
+            temp = temp.next
+            i = i+1
+        node = Node(value)
+        pre.next = node
+        node.next = temp
+
+    def print_list(self):  # 遍历链表，并将元素依次打印出来
         print("linked_list:")
-        temp=self.head
-        new_list=[]
+        temp = self.head
+        new_list = []
         while temp is not None:
             new_list.append(temp.data)
-            temp=temp.next
+            temp = temp.next
         print(new_list)
-    def remove(self,key):  #链表删除数据函数
-        if key<0 or key>self.get_length()-1:
+
+    def remove(self, key):  # 链表删除数据函数
+        if key < 0 or key > self.get_length()-1:
             print("insert error")
-        i=0
-        temp=self.head
-        while temp !=None:  #遍历找到索引值为 key 的结点
-            pre=temp
-            temp=temp.next
-            i=i+1
-            if i==key:
-                pre.next=temp.next
-                temp=None
+        i = 0
+        temp = self.head
+        while temp != None:  # 遍历找到索引值为 key 的结点
+            pre = temp
+            temp = temp.next
+            i = i+1
+            if i == key:
+                pre.next = temp.next
+                temp = None
                 return True
-        pre.next=None
-    def reverse(self): #将链表反转
+        pre.next = None
+
+    def reverse1(self):  # 迭代将链表反转
         prev = None
         current = self.head
         while current:
@@ -94,28 +112,72 @@ class Linked_List:
             current = next_node
         self.head = prev
 
+    def reverse2(self, head):  # 递归将链表反转
+        if head is None or head.next is None:
+            return head
+        node = self.reverse2(head.next)
+        head.next.next = head
+        head.next = None
+        return node
+
+
+#   两两交换链表中的节点
+# 给定一个链表，两两交换其中相邻的节点，并返回交换后的链表。
+# 你不能只是单纯的改变节点内部的值，而是需要实际的进行节点交换。
+class Solution:
+    def swapPairs(self, head: ListNode) -> ListNode:
+        if head is None or head.next is None:
+            return head
+        else:
+            p, q = head, head.next
+            p.next = self.swapPairs(q.next)
+            q.next = p
+        return q
+
+#   反转链表
+# 反转一个单链表。
+
+
+class Solution:
+    def reverseList(self, head: ListNode) -> ListNode:
+        if head is None or head.next is None:
+            return head
+        p = self.reverseList(head.next)
+        head.next.next = head
+        head.next = None
+        return p
+
+# 上述两段代码的节点不同！！！
+
 # 双链表
+
+
 class Node(object):
     # 双向链表节点
     def __init__(self, item):
         self.item = item
         self.next = None
         self.prev = None
+
+
 class DLinkList(object):
     # 双向链表
     def __init__(self):
         self._head = None
+
     def is_empty(self):
         # 判断链表是否为空
         return self._head == None
+
     def get_length(self):
         # 返回链表的长度
         cur = self._head
         count = 0
         while cur != None:
-            count=count+1
+            count = count+1
             cur = cur.next
         return count
+
     def travel(self):
         # 遍历链表
         cur = self._head
@@ -123,6 +185,7 @@ class DLinkList(object):
             print(cur.item)
             cur = cur.next
         print("")
+
     def add(self, item):
         # 头部插入元素
         node = Node(item)
@@ -136,6 +199,7 @@ class DLinkList(object):
             self._head.prev = node
             # 将_head 指向node
             self._head = node
+
     def append(self, item):
         # 尾部插入元素
         node = Node(item)
@@ -151,6 +215,7 @@ class DLinkList(object):
             cur.next = node
             # 将node的prev指向cur
             node.prev = cur
+
     def search(self, item):
         # 查找元素是否存在
         cur = self._head
@@ -159,6 +224,7 @@ class DLinkList(object):
                 return True
             cur = cur.next
         return False
+
     def insert(self, pos, item):
         # 在指定位置添加节点
         if pos <= 0:
@@ -181,6 +247,7 @@ class DLinkList(object):
             cur.next.prev = node
             # 将cur的next指向node
             cur.next = node
+
     def remove(self, item):
         # 删除元素
         if self.is_empty():
@@ -210,50 +277,53 @@ class DLinkList(object):
 
 # 二叉树
 class Node(object):
-    def __init__(self,item):
-        self.item=item #表示对应的元素
-        self.left=None #表示左节点
-        self.right=None #表示右节点
+    def __init__(self, item):
+        self.item = item  # 表示对应的元素
+        self.left = None  # 表示左节点
+        self.right = None  # 表示右节点
+
     def __str__(self):
-        return str(self.item)  #print 一个 Node 类时会打印 __str__ 的返回值
+        return str(self.item)  # print 一个 Node 类时会打印 __str__ 的返回值
+
 
 class Tree(object):
     def __init__(self):
-        self.root=Node('root')  #根节点定义为 root 永不删除，作为哨兵使用。
+        self.root = Node('root')  # 根节点定义为 root 永不删除，作为哨兵使用。
 
-    def add(self,item):
+    def add(self, item):
         node = Node(item)
-        if self.root is None:  #如果二叉树为空，那么生成的二叉树最终为新插入树的点
+        if self.root is None:  # 如果二叉树为空，那么生成的二叉树最终为新插入树的点
             self.root = node
         else:
-            q = [self.root] # 将q列表，添加二叉树的根节点
+            q = [self.root]  # 将q列表，添加二叉树的根节点
             while True:
                 pop_node = q.pop(0)
-                if pop_node.left is None: #左子树为空则将点添加到左子树
+                if pop_node.left is None:  # 左子树为空则将点添加到左子树
                     pop_node.left = node
                     return
-                elif pop_node.right is None: #右子树为空则将点添加到右子树
+                elif pop_node.right is None:  # 右子树为空则将点添加到右子树
                     pop_node.right = node
                     return
                 else:
                     q.append(pop_node.left)
                     q.append(pop_node.right)
-                    
+
     def get_parent(self, item):
         if self.root.item == item:
             return None  # 根节点没有父节点
-        tmp = [self.root] # 将tmp列表，添加二叉树的根节点
+        tmp = [self.root]  # 将tmp列表，添加二叉树的根节点
         while tmp:
             pop_node = tmp.pop(0)
-            if pop_node.left and pop_node.left.item == item: #某点的左子树为寻找的点
-                return pop_node #返回某点，即为寻找点的父节点
-            if pop_node.right and pop_node.right.item == item: #某点的右子树为寻找的点
-                return pop_node #返回某点，即为寻找点的父节点
-            if pop_node.left is not None: #添加tmp 元素
+            if pop_node.left and pop_node.left.item == item:  # 某点的左子树为寻找的点
+                return pop_node  # 返回某点，即为寻找点的父节点
+            if pop_node.right and pop_node.right.item == item:  # 某点的右子树为寻找的点
+                return pop_node  # 返回某点，即为寻找点的父节点
+            if pop_node.left is not None:  # 添加tmp 元素
                 tmp.append(pop_node.left)
             if pop_node.right is not None:
                 tmp.append(pop_node.right)
         return None
+
     def delete(self, item):
         if self.root is None:  # 如果根为空，就什么也不做
             return False
@@ -302,19 +372,24 @@ class Tree(object):
             return False
 
 # 二叉树的实现
+
+
 class Node(object):
     """节点"""
-    def  __init__(self,item):
+
+    def __init__(self, item):
         self.elem = item
         self.lchild = None
         self.rchild = None
 
+
 class Tree(object):
     """二叉树"""
+
     def __init__(self):
         self.root = None
 
-    def add(self,item):
+    def add(self, item):
         node = Node(item)
 
         if self.root is None:
@@ -327,12 +402,12 @@ class Tree(object):
             if cur_node.lchild is None:
                 cur_node.lchild = node
                 return
-            else :
+            else:
                 queue.append(cur_node.lchild)
             if cur_node.rchild is None:
                 cur_node.rchild = node
                 return
-            else :
+            else:
                 queue.append(cur_node.lchild)
                 queue.append(cur_node.rchild)
 
@@ -344,35 +419,36 @@ class Tree(object):
 
         while queue:
             cur_node = queue.pop(0)
-            print(cur_node.elem,end= " ")
+            print(cur_node.elem, end=" ")
             if cur_node.lchild is not None:
                 queue.append(cur_node.lchild)
             if cur_node.rchild is not None:
                 queue.append(cur_node.rchild)
 
-    def pre_travel(self,node):
+    def pre_travel(self, node):
         """前序遍历"""
         if node is None:
             return
-        print(node.elem,end = " ")
+        print(node.elem, end=" ")
         self.pre_travel(node.lchild)
         self.pre_travel(node.rchild)
 
-    def mid_travel(self,node):
+    def mid_travel(self, node):
         """中序遍历"""
         if node is None:
             return
         self.mid_travel(node.lchild)
-        print(node.elem,end = " ")
+        print(node.elem, end=" ")
         self.mid_travel(node.rchild)
 
-    def post_travel(self,node):
+    def post_travel(self, node):
         """后序遍历"""
         if node is None:
             return
         self.post_travel(node.lchild)
         self.post_travel(node.rchild)
         print(node.elem, end=" ")
+
 
 if __name__ == "__main__":
     tree = Tree()
@@ -405,16 +481,19 @@ class TrieNode:
     def __init__(self):
         self.nodes = dict()  # 构建字典
         self.is_leaf = False
-    def insert(self, word: str):  
+
+    def insert(self, word: str):
         curr = self
         for char in word:
             if char not in curr.nodes:
                 curr.nodes[char] = TrieNode()
             curr = curr.nodes[char]
         curr.is_leaf = True
+
     def insert_many(self, words: [str]):
         for word in words:
             self.insert(word)
+
     def search(self, word: str):
         curr = self
         for char in word:
