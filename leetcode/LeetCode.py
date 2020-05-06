@@ -1,8 +1,4 @@
-LeetCode
-1：
-l = [2, 11, 15]
-for i in range(len(l)-1):
-    print i
+# LeetCode
 
 （1）
 
@@ -31,8 +27,10 @@ class Solution:
         return None
 
 
-3:
-    def lengthOfLongestSubstring(s):
+(3)
+
+
+def lengthOfLongestSubstring(s):
         if s == "":
             return 0
         else:
