@@ -122,6 +122,8 @@ class Solution:
 # 合并两个有序链表
 # 将两个升序链表合并为一个新的升序链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。
 
+# 1
+
 
 class Solution:
     def mergeTwoLists(self, l1: ListNode, l2: ListNode) -> ListNode:
@@ -144,9 +146,59 @@ class Solution:
                 l1 = l1.next
         return first
 
+# 2
+
+
+class Solution:
+    def mergeTwoLists(self, l1: ListNode, l2: ListNode) -> ListNode:
+        if l1 is None:
+            return l2
+        elif l2 is None:
+            return l1
+        pre = ListNode(None)
+        first = pre
+        while l1 and l2:
+            if l1.val > l2.val:
+                pre.next = l2
+                l2 = l2.next
+            else:
+                pre.next = l1
+                l1 = l1.next
+            pre = pre.next
+        pre.next = l1 if l1 is not None else l2
+        return first.next
+
+# 请判断一个链表是否为回文链表。
+
+
+class Solution:
+    def isPalindrome(self, head: ListNode) -> bool:
+        if head is None or head.next is None:
+            return True
+        slow, fast = head, head
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+        new_head = self.reverse(slow)
+        while head and new_head:
+            if head.val != new_head.val:
+                return False
+            head = head.next
+            new_head = new_head.next
+        return True
+
+    def reverse(self, head):
+        pre = None
+        cur = head
+        while cur:
+            k = cur.next
+            cur.next = pre
+            pre = cur
+            cur = k
+        return pre
+
+
 # 双链表
-
-
 class Node(object):
     # 双向链表节点
     def __init__(self, item):

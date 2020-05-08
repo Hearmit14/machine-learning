@@ -31,21 +31,21 @@ class Solution:
 
 
 def lengthOfLongestSubstring(s):
-        if s == "":
-            return 0
-        else:
-            m = 1
-            for i in range(len(s)):
-                l = []
-                # for j in range(i+1,len(s)):
-                for j in range(i, len(s)):
-                    if s[j] not in l:
-                        l.append(s[j])
-                    else:
-                        break
-                if len(l) > m:
-                    m = len(l)
-            print(m)
+    if s == "":
+        return 0
+    else:
+        m = 1
+        for i in range(len(s)):
+            l = []
+            # for j in range(i+1,len(s)):
+            for j in range(i, len(s)):
+                if s[j] not in l:
+                    l.append(s[j])
+                else:
+                    break
+            if len(l) > m:
+                m = len(l)
+        print(m)
 
 # 实现 strStr() 函数。
 # 给定一个 haystack 字符串和一个 needle 字符串，在 haystack 字符串中找出 needle 字符串出现的第一个位置(从0开始)。如果不存在，则返回 - 1。
@@ -88,3 +88,68 @@ def strStr(haystack, needle):
 
 
 strStr('aaaaaab', 'ba')
+
+# 爬楼梯
+# 假设你正在爬楼梯。需要 n 阶你才能到达楼顶。
+
+# 每次你可以爬 1 或 2 个台阶。你有多少种不同的方法可以爬到楼顶呢？
+
+# 注意：给定 n 是一个正整数。
+
+
+class Solution:
+    def climbStairs(self, n: int) -> int:
+        cache = {}
+
+        def NewclimbStairs(self, n):
+            if n in cache:
+                return cache[n]
+            if n <= 2:
+                cache[n] = n
+            else:
+                cache[n] = self.NewclimbStairs(n-1)+self.NewclimbStairs(n-2)
+
+        return cache[n]
+
+
+TODO: 这种写法有问题！！！
+
+
+class Solution:
+    def climbStairs(self, n: int) -> int:
+        cache = {}
+
+        def NewclimbStairs(n):
+            if n in cache:
+                return cache[n]
+            if n <= 2:
+                cache[n] = n
+            else:
+                cache[n] = NewclimbStairs(n-1)+NewclimbStairs(n-2)
+            return cache[n]
+        return NewclimbStairs(n)
+
+
+TODO: 了解啥时候需要self
+
+# 实现 pow(x, n) ，即计算 x 的 n 次幂函数。
+
+
+class Solution:
+    def myPow(self, x: float, n: int) -> float:
+        dict = {}
+
+        def newPow(x, n):
+            if n in dict:
+                return dict[n]
+            if n == 0:
+                dict[n] = 1
+            if n == 1:
+                dict[n] = x
+            i, j = abs(n)//2, abs(n) % 2
+            if n < 0:
+                dict[n] = 1/(newPow(x, i)*newPow(x, i)*newPow(x, j))
+            else:
+                dict[n] = newPow(x, i)*newPow(x, i)*newPow(x, j)
+            return dict[n]
+        return newPow(x, n)
