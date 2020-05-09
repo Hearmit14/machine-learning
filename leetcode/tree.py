@@ -100,6 +100,7 @@ class Tree(object):
 
 # """广度遍历"""
 
+
     def level_queue(self, root):
         """利用队列实现树的层次遍历"""
         if root == None:
@@ -109,7 +110,7 @@ class Tree(object):
         myQueue.append(node)
         while myQueue:
             node = myQueue.pop(0)
-            print(node.elem)
+            print(node.item)
             if node.left != None:
                 myQueue.append(node.left)
             if node.right != None:
@@ -118,11 +119,12 @@ class Tree(object):
 
 # """深度遍历"""
 
+
     def front_digui(self, root):
         """利用递归实现树的先序遍历"""
         if root == None:
             return
-        print(root.elem)
+        print(root.item)
         self.front_digui(root.left)
         self.front_digui(root.right)
 
@@ -131,7 +133,7 @@ class Tree(object):
         if root == None:
             return
         self.middle_digui(root.left)
-        print(root.elem)
+        print(root.item)
         self.middle_digui(root.right)
 
     def later_digui(self, root):
@@ -140,7 +142,7 @@ class Tree(object):
             return
         self.later_digui(root.left)
         self.later_digui(root.right)
-        print(root.elem)
+        print(root.item)
 
     def front_stack(self, root):
         """利用堆栈实现树的先序遍历"""
@@ -150,7 +152,7 @@ class Tree(object):
         node = root
         while node or myStack:
             while node:  # 从根节点开始，一直找它的左子树
-                print(node.elem)
+                print(node.item)
                 myStack.append(node)
                 node = node.left
             node = myStack.pop()  # while结束表示当前节点node为空，即前一个节点没有左子树了
@@ -167,7 +169,7 @@ class Tree(object):
                 myStack.append(node)
                 node = node.left
             node = myStack.pop()  # while结束表示当前节点node为空，即前一个节点没有左子树了
-            print(node.elem)
+            print(node.item)
             node = node.right  # 开始查看它的右子树
 
     def later_stack(self, root):
@@ -186,7 +188,7 @@ class Tree(object):
                 myStack1.append(node.right)
             myStack2.append(node)
         while myStack2:  # 将myStack2中的元素出栈，即为后序遍历次序
-            print myStack2.(op().elem)
+            print(myStack2.pop().item)
 
 
 if __name__ == "__main__":
@@ -201,13 +203,13 @@ if __name__ == "__main__":
     tree.add(7)
     tree.add(8)
     tree.add(9)
-    tree.bread_travel()
+    tree.level_queue(tree.root)
     print(" ")
-    tree.pre_travel(tree.root)
+    tree.front_digui(tree.root)
     print(" ")
-    tree.mid_travel(tree.root)
+    tree.middle_digui(tree.root)
     print(" ")
-    tree.post_travel(tree.root)
+    tree.later_digui(tree.root)
 
 # 0 1 2 3 4 5 6 7 8 9    层次遍历
 # 0 1 3 7 8 4 9 2 5 6    前序遍历
