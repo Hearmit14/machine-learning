@@ -239,13 +239,10 @@ res0: Int = 1200
 // 第3章 Spark编程基础
 // rdd
 // 从文件系统中加载数据创建RDD
-scala> val lines = sc.textFile("file:///usr/local/spark/mycode/rdd/word.txt")
-lines: org.apache.spark.rdd.RDD[String] = file:///usr/local/spark/mycode/rdd/word.txt MapPartitionsRDD[12] at textFile at <console>:27
+val lines = sc.textFile("file:///usr/local/spark/mycode/rdd/word.txt")
 // 通过并行集合（数组）创建RDD
-scala>val array = Array(1,2,3,4,5)
-array: Array[Int] = Array(1, 2, 3, 4, 5)
-scala>val rdd = sc.parallelize(array)
-rdd: org.apache.spark.rdd.RDD[Int] = ParallelCollectionRDD[13] at parallelize at <console>:29
+val array = Array(1,2,3,4,5)
+val rdd = sc.parallelize(array)
 
 // RDD被创建好以后，在后续使用过程中一般会发生两种操作：
 // *  转换（Transformation）： 基于现有的数据集创建一个新的数据集。
@@ -456,7 +453,7 @@ scala> df.sort(df("age").desc, df("name").asc).show()
 +----+-------+
  
 //对列进行重命名
-scala> df.select(df("name").as("username"),df("age")).show()
+scala> df.select(df("name").as("username"),df("age")).show(false)
 +--------+----+
 |username| age|
 +--------+----+
@@ -544,4 +541,60 @@ scala> results.map(attributes => "name: " + attributes(0)+","+"age:"+attributes(
 |   name: Andy,age:30|
 | name: Justin,age:19|
 +--------------------+
- 
+
+// val documentDF = spark.createDataFrame(Seq(
+//   "Hi I heard about Spark".split(" "),
+//   "I wish Java could use case classes".split(" "),
+//   "Logistic regression models are neat".split(" ")
+// ).map(Tuple1.apply)).toDF("text")
+
+
+// val df1 = Seq(
+//     (1.0, 2.0, 3.0),
+//     (1.1, 2.1, 3.1),
+//     (1.2, 2.2, 3.2)).toDF("c1", "c2", "c3")
+
+
+// val data = sc.makeRDD(Array(
+//     ("female","Lily"),
+//     ("female","Lucy"),
+//     ("female","Emily"),
+//     ("female","Kate"),
+//     ("female","Alice"),
+//     ("male","Tom"),
+//     ("male","Roy"),
+//     ("male","David"),
+//     ("male","Frank"),
+//     ("male","Jack")))
+
+// val data1 = Seq(
+//     Vectors.dense(-1.0, 1.0, 1.0),
+//     Vectors.dense(-1.0, 3.0, 1.0),
+//     Vectors.dense(0.0, 5.0, 1.0),
+//     Vectors.dense(0.0, 2.0, 3.0),
+//     Vectors.dense(1.0, 4.0, 5.0)
+//     )
+
+// val data2 = Seq(
+//     Array(-1.0, 1.0, 1.0),
+//     Array(-1.0, 3.0, 1.0),
+//     Array(0.0, 5.0, 1.0),
+//     Array(0.0, 2.0, 3.0),
+//     Array(1.0, 4.0, 5.0)
+//     )
+
+// val rdd1 = sc.parallelize(data1)
+// rdd1.take(10)
+// val rdd2 = sc.parallelize(data2).map(f=> Vectors.dense(f))
+
+
+// val rdd3 = sc.parallelize(
+//     Array(
+//         Array(1.0, 7.0, 0, 0),
+//         Array(0, 2.0, 8.0, 0),
+//         Array(5.0, 0, 3.0, 9.0),
+//         Array(0, 6.0, 0, 4.0)
+//     )
+// ).map(f=> Vectors.dense(f))
+
+TODO:了解array，list，seq，vector的区别

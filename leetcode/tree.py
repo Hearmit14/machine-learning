@@ -1,4 +1,4 @@
-
+`
 # 二叉树
 
 
@@ -100,7 +100,6 @@ class Tree(object):
 
 # """广度遍历"""
 
-
     def level_queue(self, root):
         """利用队列实现树的层次遍历"""
         if root == None:
@@ -118,7 +117,6 @@ class Tree(object):
 
 
 # """深度遍历"""
-
 
     def front_digui(self, root):
         """利用递归实现树的先序遍历"""
@@ -329,6 +327,46 @@ class Solution:
             queue.append(node.val)
         return queue[::-1]
 
+
+# 给定一个整数 n，生成所有由 1 ... n 为节点所组成的二叉搜索树。
+class Solution:
+    def generateTrees(self, n: int) -> List[TreeNode]:
+        def helper(l, r):
+            if l > r:
+                return [None, ]
+            all_tree = []
+            for i in range(l, r+1):
+                ltree = helper(l, i-1)
+                rtree = helper(i+1, r)
+                for lltree in ltree:
+                    for rrtree in rtree:
+                        root = TreeNode(i)
+                        root.left = lltree
+                        root.right = rrtree
+                        all_tree.append(root)
+            return all_tree
+        return helper(1, n) if n else []
+
+
+# 给你一个二叉树，请你返回其按 层序遍历 得到的节点值。 （即逐层地，从左到右访问所有节点）。
+class Solution:
+    def levelOrder(self, root: TreeNode) -> List[List[int]]:
+        if root is None:
+            return []
+        res = []
+        cur_level = [root, ]
+        while cur_level:
+            tmp = []
+            for _ in range(len(cur_level)):
+                i = cur_level.pop(0)
+                if i.left:
+                    cur_level.append(i.left)
+                if i.right:
+                    cur_level.append(i.right)
+                tmp.append(i.val)
+            res.append(tmp)
+        return res
+
 # 字典树
 
 
@@ -356,3 +394,6 @@ class TrieNode:
                 return False
             curr = curr.nodes[char]
         return curr.is_leaf
+
+
+`

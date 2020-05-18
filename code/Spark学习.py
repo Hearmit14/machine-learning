@@ -48,9 +48,9 @@ rdd = sc.parallelize(nums)
 # 构造多维RDD
 # 方法1，先构造多维dataframe
 val df1 = Seq(
-    | (1.0, 2.0, 3.0),
-    |       (1.1, 2.1, 3.1),
-    |       (1.2, 2.2, 3.2)).toDF("c1", "c2", "c3")
+    (1.0, 2.0, 3.0),
+    (1.1, 2.1, 3.1),
+    (1.2, 2.2, 3.2)).toDF("c1", "c2", "c3")
 
 df1.show
 +---+---+---+
@@ -78,7 +78,7 @@ val rdd1 = sc.parallelize(
         Array(5.0, 0, 3.0, 9.0),
         Array(0, 6.0, 0, 4.0)
     )
-).map(f=> Vectors.dense(f))
+).map(f= > Vectors.dense(f))
 
 # map( ):接收一个函数，应用到RDD中的每个元素，然后为每一条输入返回一个对象。
 # flatMap( )：接收一个函数，应用到RDD中的每个元素，返回一个包含可迭代的类型(如list等)的RDD,可以理解为先Map()，后flat().
