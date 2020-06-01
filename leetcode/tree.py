@@ -100,6 +100,7 @@ class Tree(object):
 
 # """广度遍历"""
 
+
     def level_queue(self, root):
         """利用队列实现树的层次遍历"""
         if root == None:
@@ -117,6 +118,7 @@ class Tree(object):
 
 
 # """深度遍历"""
+
 
     def front_digui(self, root):
         """利用递归实现树的先序遍历"""
@@ -331,21 +333,21 @@ class Solution:
 # 给定一个整数 n，生成所有由 1 ... n 为节点所组成的二叉搜索树。
 class Solution:
     def generateTrees(self, n: int) -> List[TreeNode]:
-        def helper(l, r):
-            if l > r:
-                return [None, ]
-            all_tree = []
-            for i in range(l, r+1):
-                ltree = helper(l, i-1)
-                rtree = helper(i+1, r)
-                for lltree in ltree:
-                    for rrtree in rtree:
-                        root = TreeNode(i)
-                        root.left = lltree
-                        root.right = rrtree
-                        all_tree.append(root)
-            return all_tree
-        return helper(1, n) if n else []
+        # trees = []
+        def generate(low, high):
+            if low > high:
+                return [None]
+            trees = []  # 注意赋值的位置
+            for i in range(low, high + 1):
+                # root = TreeNode(i)
+                for ltree in generate(low, i-1):
+                    for rtree in generate(i+1, high):
+                        root = TreeNode(i)  # 注意赋值的位置
+                        root.left = ltree
+                        root.right = rtree
+                        trees.append(root)
+            return trees
+        return generate(1, n) if n else []
 
 
 # 给你一个二叉树，请你返回其按 层序遍历 得到的节点值。 （即逐层地，从左到右访问所有节点）。
@@ -367,33 +369,54 @@ class Solution:
             res.append(tmp)
         return res
 
-# 字典树
+
+# 找出二叉树中某两个节点的第一个共同祖先。不得将其他的节点存储在另外的数据结构中。注意：这不一定是二叉搜索树。
+class Solution:
+    def lowestCommonAncestor(self, root: TreeNode, p: TreeNode, q: TreeNode) -> TreeNode:
+        if not root or p == root or q == root:
+            return root
+        l = self.lowestCommonAncestor(root.left, p, q)
+        r = self.lowestCommonAncestor(root.right, p, q)
+        if l and r:
+            return root
+        return l if l else r
 
 
-class TrieNode:
-    def __init__(self):
-        self.nodes = dict()  # 构建字典
-        self.is_leaf = False
+# 删除二叉搜索树中的节点
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
 
-    def insert(self, word: str):
-        curr = self
-        for char in word:
-            if char not in curr.nodes:
-                curr.nodes[char] = TrieNode()
-            curr = curr.nodes[char]
-        curr.is_leaf = True
+class Solution:
+    def deleteNode(self, root: TreeNode, key: int) -> TreeNode:
+        if not root:
+            return root
+        if root.val > key:
+            root.left = self.deleteNode(root.left, key)
+        elif root.val < key:
+            root.right = self.deleteNode(root.right, key)
+        elif root.val == key and not root.left and not root.right:
+            root = None
+        else:
+            if not root.left:
+                root.val = self.successor(root)
+                root.right = self.deleteNode(root.right, root.val)
+            else:
+                root.val = self.predecessor(root)
+                root.left = self.deleteNode(root.left, root.val)
+        return root
 
-    def insert_many(self, words: [str]):
-        for word in words:
-            self.insert(word)
+    def successor(self, root):
+        root = root.right
+        while root.left:
+            root = root.left
+        return root.val
 
-    def search(self, word: str):
-        curr = self
-        for char in word:
-            if char not in curr.nodes:
-                return False
-            curr = curr.nodes[char]
-        return curr.is_leaf
-
-
-`
+    def predecessor(self, root):
+        root = root.left
+        while root.right:
+            root = root.right
+        return root.val

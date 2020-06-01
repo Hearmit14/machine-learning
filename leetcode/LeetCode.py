@@ -167,3 +167,83 @@ class Solution:
                 else:
                     dp[i][j] = max(dp[i-1][j], dp[i][j-1])
         return dp[-1][-1]
+
+
+# 给定一个字符串 s，找到 s 中最长的回文子串。你可以假设 s 的最大长度为 1000。
+# 先确定起始位置，再循环结束位置
+# 有问题，利用了未来的信息
+# def longestPalindrome(s):
+#     n = len(s)
+#     dp = [[0] * n for _ in range(n)]
+#     maxlen = 0
+#     res = ''
+#     for i in range(n):
+#         for j in range(i, n):
+#             if i == j:
+#                 dp[i][j] = 1
+#             elif j - i <= 2 and s[i] == s[j]:
+#                 dp[i][j] = 1
+#             elif s[i] == s[j] and dp[i+1][j-1]:
+#                 dp[i][j] = 1
+#             if dp[i][j] and j - i > maxlen:
+#                 maxlen = j - i
+#                 res = s[i:j+1]
+#     return dp
+
+# 先确定结束位置，再循环起始位置
+def longestPalindrome(s):
+    n = len(s)
+    if n <= 1:
+        return s
+    dp = [[0] * n for _ in range(n)]
+    maxlen = 0
+    res = ''
+    for j in range(n):
+        for i in range(j+1):
+            if i == j:
+                dp[i][j] = 1
+            elif j-i <= 2 and s[i] == s[j]:
+                dp[i][j] = 1
+            elif s[i] == s[j] and dp[i+1][j-1]:
+                dp[i][j] = 1
+            if dp[i][j] and j+1-i > maxlen:
+                maxlen = j+1-i
+                res = s[i:j+1]
+    return res
+
+
+longestPalindrome('acdcad')
+
+# 买卖股票的最佳时机
+# 假如计划在第 i 天卖出股票，那么最大利润的差值一定是在[0, i-1] 之间选最低点买入；所以遍历数组，依次求每个卖出时机的的最大差值，再从中取最大值。
+
+
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        if not prices:
+            return 0
+        maxProfit = 0
+        minprice = prices[0]
+        for i in prices:
+            minprice = min(minprice, i)
+            maxProfit = max(maxProfit, i-minprice)
+        return maxProfit
+
+# 计数质数
+# 统计所有小于非负整数 n 的质数的数量。
+
+
+class Solution:
+    def countPrimes(self, n: int) -> int:
+        if n <= 1:
+            return 0
+        if n <= 4:
+            return n-2
+        l = [i for i in range(2, n)]
+        j = 2
+        while j < n:
+            for i in range(2, n//j+1):
+                if j*i in l:
+                    l.remove(j*i)
+            j += 1
+        return len(l)
