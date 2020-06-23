@@ -187,16 +187,6 @@ class Solution:
             new_head = new_head.next
         return True
 
-    def reverse(self, head):
-        pre = None
-        cur = head
-        while cur:
-            k = cur.next
-            cur.next = pre
-            pre = cur
-            cur = k
-        return pre
-
 
 # 输入两个链表，找出它们的第一个公共节点。
 class Solution:

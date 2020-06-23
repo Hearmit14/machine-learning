@@ -100,7 +100,6 @@ class Tree(object):
 
 # """广度遍历"""
 
-
     def level_queue(self, root):
         """利用队列实现树的层次遍历"""
         if root == None:
@@ -118,7 +117,6 @@ class Tree(object):
 
 
 # """深度遍历"""
-
 
     def front_digui(self, root):
         """利用递归实现树的先序遍历"""
@@ -380,6 +378,80 @@ class Solution:
         if l and r:
             return root
         return l if l else r
+
+# 根据一棵树的前序遍历与中序遍历构造二叉树。
+# 1 用preorder的指针，有问题
+
+
+class Solution:
+    def buildTree(self, preorder: List[int], inorder: List[int]) -> TreeNode:
+        def build(l, r):
+            if l > r:
+                return None
+            root = TreeNode(preorder[l])
+            k = inorder.index(preorder[l])
+            root.left = build(l + 1, k)
+            root.right = build(k + 1, r)
+            return root
+        return build(0, len(preorder) - 1)
+
+# 1.1 用inorder的指针
+
+
+class Solution:
+    def buildTree(self, preorder: List[int], inorder: List[int]) -> TreeNode:
+        def build(l, r):
+            if l > r:
+                return None
+            root = TreeNode(preorder.pop(0))
+            k = inorder.index(root.val)
+            root.left = build(l, k-1)
+            root.right = build(k + 1, r)
+            return root
+        return build(0, len(preorder) - 1)
+
+# 2
+
+
+class Solution:
+    def buildTree(self, preorder: List[int], inorder: List[int]) -> TreeNode:
+        def build(l1, r1, l2, r2):
+            if l1 > r1 or l2 > r2:
+                return None
+            root = TreeNode(preorder[l1])
+            k = inorder.index(preorder[l1])
+            root.left = build(l1 + 1, k+l1-l2, l2, k - 1)
+            root.right = build(k+l1-l2 + 1, r1, k + 1, r2)
+            return root
+        return build(0, len(preorder)-1, 0, len(inorder)-1)
+
+# 根据一棵树的中序遍历与后序遍历构造二叉树。
+
+
+class Solution:
+    def buildTree(self, inorder: List[int], postorder: List[int]) -> TreeNode:
+        def build(l, r):
+            if l > r:
+                return None
+            root = TreeNode(postorder.pop())
+            k = inorder.index(root.val)
+            root.right = build(k + 1, r)
+            root.left = build(l, k-1)
+            return root
+        return build(0, len(postorder) - 1)
+
+
+class Solution:
+    def buildTree(self, inorder: List[int], postorder: List[int]) -> TreeNode:
+        def build(l1, r1, l2, r2):
+            if l1 > r1 or l2 > r2:
+                return None
+            root = TreeNode(postorder[r2])
+            k = inorder.index(postorder[r2])
+            root.left = build(l1, k - 1, l2, l2 - l1 + k - 1)
+            root.right = build(k + 1, r1, k + r2 - r1, r2 - 1)
+            return root
+        return build(0, len(inorder)-1, 0, len(postorder)-1)
 
 
 # 删除二叉搜索树中的节点
